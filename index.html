@@ -2,84 +2,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>English Practice</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
-      text-align: center;
-      padding: 30px 15px;
-      color: #18344f;
-    }
-    h1 { font-size: 32px; }
-    .box {
-      background: white;
-      max-width: 500px;
-      margin: 25px auto;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 3px 12px #0001;
-    }
-    button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 14px 25px;
-      font-size: 17px;
-      cursor: pointer;
-    }
-    button:hover { background: #1745a5; }
-    .feedback { font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fashion & Tenses | English Practice</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 20px;
+  background: #f1f4f8;
+  color: #18344f;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+main {
+  max-width: 650px;
+  margin: 25px auto;
+}
+header {
+  background: #18344f;
+  color: white;
+  padding: 28px;
+  border-radius: 14px;
+}
+h1 { margin: 8px 0; }
+.card {
+  background: white;
+  margin-top: 20px;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px #0001;
+}
+.badge {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.progress {
+  height: 8px;
+  background: #e1e7ef;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 18px 0;
+}
+#progressBar {
+  height: 100%;
+  width: 0;
+  background: #2563eb;
+}
+.option {
+  display: block;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+.option:has(input:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  font-size: 17px;
+}
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 22px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  min-height: 48px;
+}
+button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+.feedback {
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 18px;
+}
+.correct {
+  background: #dcfce7;
+  color: #14532d;
+}
+.incorrect {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.hidden { display: none; }
+#nextBtn { background: #18344f; }
+small { color: #64748b; }
+</style>
 </head>
+
 <body>
+<main>
+<header>
+  <div class="badge">ENGLISH PRACTICE</div>
+  <h1>Fashion & Tenses</h1>
+  <p>From Design to Runway</p>
+  <p>20 questions · 6 tenses · Immediate feedback</p>
+</header>
 
-  <h1>English Practice</h1>
-  <p>Learn. Practise. Improve.</p>
-
-  <div class="box">
-    <h2>Grammar Practice</h2>
-    <p>Choose the correct answer.</p>
-
-    <p><strong>She ___ to school every day.</strong></p>
-
-    <label><input type="radio" name="answer" value="go">
-      go</label><br><br>
-
-    <label><input type="radio" name="answer" value="goes">
-      goes</label><br><br>
-
-    <label><input type="radio" name="answer" value="going">
-      going</label><br><br>
-
-    <button onclick="checkAnswer()">Check answer</button>
-
-    <p id="feedback" class="feedback" aria-live="polite"></p>
+<section class="card" id="quiz">
+  <div id="counter"></div>
+  <div class="progress">
+    <div id="progressBar"></div>
   </div>
 
-  <script>
-    function checkAnswer() {
-      const selected =
-        document.querySelector('input[name="answer"]:checked');
-      const feedback = document.getElementById("feedback");
+  <h2 id="question"></h2>
+  <p id="instruction"></p>
 
-      if (!selected) {
-        feedback.textContent = "Please choose an answer.";
-        feedback.style.color = "#18344f";
-      } else if (selected.value === "goes") {
-        feedback.textContent =
-          "Correct! She is third-person singular, so we add -s.";
-        feedback.style.color = "green";
-      } else {
-        feedback.textContent =
-          "Not quite. Remember: he, she, it + verb + -s.";
-        feedback.style.color = "#b91c1c";
-      }
+  <div id="answers"></div>
+
+  <button id="checkBtn" onclick="checkAnswer()">
+    Check answer
+  </button>
+
+  <div id="feedback" class="feedback hidden"
+       role="status" aria-live="polite"></div>
+
+  <button id="nextBtn" class="hidden"
+          onclick="nextQuestion()">
+    Next question →
+  </button>
+</section>
+
+<section class="card hidden" id="results">
+  <h2>Well done!</h2>
+  <p>You have completed Fashion & Tenses.</p>
+  <h3 id="finalScore"></h3>
+  <p id="finalMessage"></p>
+  <button onclick="restartQuiz()">Try again</button>
+</section>
+</main>
+
+<script>
+const questions = [
+{
+q:"The designer ___ new collections every year.",
+type:"mc",
+options:["create","creates","created"],
+answer:"creates",
+ex:"Simple Present: With he, she or it, add -s to the verb."
+},
+{
+q:"Last week, the students ___ their first fashion show.",
+type:"mc",
+options:["organise","organised","have organised"],
+answer:"organised",
+ex:"Simple Past: Last week refers to a completed action at a specific time in the past."
+},
+{
+q:"The tailor ___ the fabric before cutting it.",
+type:"mc",
+options:["measures","measure","measured"],
+answer:"measures",
+ex:"Simple Present: The sentence describes a regular step in garment production. The tailor is third-person singular."
+},
+{
+q:"Yesterday, the model ___ a beautiful silk dress.",
+type:"gap",
+verb:"wear",
+answer:"wore",
+ex:"Simple Past: Yesterday refers to a completed action. Wear is irregular: wear – wore – worn."
+},
+{
+q:"Our fashion school ___ three new sewing machines recently.",
+type:"mc",
+options:["has bought","bought","had bought"],
+answer:"has bought",
+ex:"Present Perfect: Recently connects a past action with the present. Our fashion school is singular, so use has + past participle."
+},
+{
+q:"The designer ___ already ___ the sketches.",
+type:"gap",
+verb:"finish",
+answer:"has finished",
+ex:"Present Perfect: The designer has already finished the sketches. Use has + past participle."
+},
+{
+q:"The students ___ their garments before the fashion show started.",
+type:"mc",
+options:["have completed","had completed","will complete"],
+answer:"had completed",
+ex:"Past Perfect: The garments were completed before another action in the past. Use had + past participle."
+},
+{
+q:"Tomorrow, the fashion company ___ its new collection.",
+type:"mc",
+options:["will present","presented","has presented"],
+answer:"will present",
+ex:"Will Future: Will + infinitive can express a future prediction or decision."
+},
+{
+q:"Look at those dark clouds! It ___ rain during the outdoor fashion show.",
+type:"mc",
+options:["will","is going to","has"],
+answer:"is going to",
+ex:"Going-to Future: We use be going to + infinitive for a prediction based on present evidence."
+},
+{
+q:"The fashion students ___ a new collection next month. They have already made all the plans.",
+type:"gap",
+verb:"present",
+answer:"are going to present",
+ex:"Going-to Future: The students have already made their plans. Use are going to + infinitive."
+},
+{
+q:"Every morning, the shop assistant ___ the window display.",
+type:"gap",
+verb:"check",
+answer:"checks",
+ex:"Simple Present: Every morning describes a routine. Add -s with the singular subject."
+},
+{
+q:"The textile factory ___ 500 metres of denim last Monday.",
+type:"gap",
+verb:"produce",
+answer:"produced",
+ex:"Simple Past: Last Monday refers to a completed action at a specific time in the past."
+},
+{
+q:"The students ___ never ___ a professional fashion show before.",
+type:"gap",
+verb:"organise",
+answer:"have organised",
+ex:"Present Perfect: Never before refers to experience up to the present. Use have + past participle."
+},
+{
+q:"By the time the models arrived, the team ___ all the outfits.",
+type:"gap",
+verb:"prepare",
+answer:"had prepared",
+ex:"Past Perfect: The outfits were prepared before the models arrived. Use had + past participle."
+},
+{
+q:"I think sustainable fashion ___ more important in the future.",
+type:"mc",
+options:["becomes","has become","will become"],
+answer:"will become",
+ex:"Will Future: I think introduces a prediction about the future."
+},
+{
+q:"The designer has decided to use recycled cotton. She ___ a sustainable collection.",
+type:"gap",
+verb:"create",
+answer:"is going to create",
+ex:"Going-to Future: The designer has already made a decision. Use is going to + infinitive."
+},
+{
+q:"The company ___ its first store in Berlin in 2018.",
+type:"gap",
+verb:"open",
+answer:"opened",
+ex:"Simple Past: In 2018 is a specific completed time in the past."
+},
+{
+q:"The fashion brand ___ already ___ several sustainable collections.",
+type:"gap",
+verb:"launch",
+answer:"has launched",
+ex:"Present Perfect: Already indicates a completed action relevant to the present. Use has + past participle."
+},
+{
+q:"Before the designer opened her own studio, she ___ for a famous fashion house.",
+type:"gap",
+verb:"work",
+answer:"had worked",
+ex:"Past Perfect: Working for the fashion house happened before opening her own studio."
+},
+{
+q:"The students have bought the fabric and prepared the patterns. They ___ their garments next week.",
+type:"gap",
+verb:"sew",
+answer:"are going to sew",
+ex:"Going-to Future: The preparations show an existing plan. Use are going to + infinitive."
+}
+];
+
+let current = 0;
+let score = 0;
+let checked = false;
+
+function normalise(value) {
+  return value.trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[.!?]+$/, "");
+}
+
+function showQuestion() {
+  checked = false;
+  const item = questions[current];
+
+  document.getElementById("counter").textContent =
+    "Question " + (current + 1) + " of " + questions.length;
+
+  document.getElementById("progressBar").style.width =
+    ((current + 1) / questions.length * 100) + "%";
+
+  document.getElementById("question").textContent = item.q;
+
+  document.getElementById("instruction").textContent =
+    item.type === "mc"
+    ? "Choose the correct answer."
+    : "Write the correct verb form: " + item.verb;
+
+  const answers = document.getElementById("answers");
+  answers.innerHTML = "";
+
+  if (item.type === "mc") {
+    item.options.forEach(option => {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "answer";
+      input.value = option;
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(" " + option));
+      answers.appendChild(label);
+    });
+  } else {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = "textAnswer";
+    input.placeholder = "Type your answer here";
+    input.autocomplete = "off";
+    input.setAttribute("aria-label", "Your answer");
+    answers.appendChild(input);
+  }
+
+  document.getElementById("feedback").className =
+    "feedback hidden";
+  document.getElementById("feedback").textContent = "";
+
+  document.getElementById("checkBtn").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+
+  document.getElementById("checkBtn").disabled = false;
+}
+
+function checkAnswer() {
+  if (checked) return;
+
+  const item = questions[current];
+  let answer = "";
+
+  if (item.type === "mc") {
+    const selected =
+      document.querySelector('input[name="answer"]:checked');
+
+    if (!selected) {
+      alert("Please choose an answer.");
+      return;
     }
-  </script>
+    answer = selected.value;
+  } else {
+    answer = document.getElementById("textAnswer").value;
+    if (!answer.trim()) {
+      alert("Please enter your answer.");
+      return;
+    }
+  }
 
+  checked = true;
+  const correct =
+    normalise(answer) === normalise(item.answer);
+
+  if (correct) score++;
+
+  const feedback = document.getElementById("feedback");
+  feedback.className =
+    "feedback " + (correct ? "correct" : "incorrect");
+
+  feedback.textContent =
+    (correct ? "Correct! " : "Not quite. Correct answer: " +
+    item.answer + ". ") + item.ex;
+
+  document.querySelectorAll("#answers input")
+    .forEach(input => input.disabled = true);
+
+  document.getElementById("checkBtn").classList.add("hidden");
+
+  const nextBtn = document.getElementById("nextBtn");
+  nextBtn.classList.remove("hidden");
+
+  nextBtn.textContent =
+    current === questions.length - 1
+    ? "See my results →"
+    : "Next question →";
+}
+
+function nextQuestion() {
+  if (!checked) return;
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    document.getElementById("quiz").classList.add("hidden");
+    document.getElementById("results").classList.remove("hidden");
+
+    document.getElementById("finalScore").textContent =
+      "Your score: " + score + " / " + questions.length +
+      " (" + Math.round(score / questions.length * 100) + "%)";
+
+    document.getElementById("finalMessage").textContent =
+      score === questions.length
+      ? "Excellent! You answered every question correctly."
+      : "Review the explanations and try again to improve your score.";
+  }
+}
+
+function restartQuiz() {
+  current = 0;
+  score = 0;
+  checked = false;
+  document.getElementById("results").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  showQuestion();
+}
+
+showQuestion();
+</script>
 </body>
 </html>
