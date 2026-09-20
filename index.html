@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Practice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      text-align: center;
+      padding: 30px 15px;
+      color: #18344f;
+    }
+    h1 { font-size: 32px; }
+    .box {
+      background: white;
+      max-width: 500px;
+      margin: 25px auto;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px #0001;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 25px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+    button:hover { background: #1745a5; }
+    .feedback { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>English Practice</h1>
+  <p>Learn. Practise. Improve.</p>
+
+  <div class="box">
+    <h2>Grammar Practice</h2>
+    <p>Choose the correct answer.</p>
+
+    <p><strong>She ___ to school every day.</strong></p>
+
+    <label><input type="radio" name="answer" value="go">
+      go</label><br><br>
+
+    <label><input type="radio" name="answer" value="goes">
+      goes</label><br><br>
+
+    <label><input type="radio" name="answer" value="going">
+      going</label><br><br>
+
+    <button onclick="checkAnswer()">Check answer</button>
+
+    <p id="feedback" class="feedback" aria-live="polite"></p>
+  </div>
+
+  <script>
+    function checkAnswer() {
+      const selected =
+        document.querySelector('input[name="answer"]:checked');
+      const feedback = document.getElementById("feedback");
+
+      if (!selected) {
+        feedback.textContent = "Please choose an answer.";
+        feedback.style.color = "#18344f";
+      } else if (selected.value === "goes") {
+        feedback.textContent =
+          "Correct! She is third-person singular, so we add -s.";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent =
+          "Not quite. Remember: he, she, it + verb + -s.";
+        feedback.style.color = "#b91c1c";
+      }
+    }
+  </script>
+
+</body>
+</html>
